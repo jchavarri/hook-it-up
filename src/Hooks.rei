@@ -32,11 +32,12 @@ let createElement:
 
 
 
+type reactHook('a);
+let map: (reactHook('b), 'b => 'a) => reactHook('a);
 
 [@bs.set] external setName: ((. 'props) => ReasonReact.reactElement, string) => unit = "displayName";
 
-[@bs.module "react"] external useState: 'a => ('a, (. 'a) => unit) = "";
-
+let useState: 'a => reactHook(('a, (. 'a) => unit));
 
 [@bs.module "react"] external useEffect: ((unit) => ((. unit) => unit)) => unit = "";
 [@bs.module "react"]
@@ -73,3 +74,10 @@ external createElement:
   ) =>
   ReasonReact.reactElement =
   "";
+
+let createElementWithHookedComponent:
+  (
+    ~component: (. Js.t({..} as 'a)) => reactHook('b),
+    ~props: Js.t({..} as 'a)
+  ) =>
+  ReasonReact.reactElement;

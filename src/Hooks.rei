@@ -1,8 +1,14 @@
+type reactHook('a);
+let map: (reactHook('b), 'b => 'a) => reactHook('a);
+let chain: (reactHook('b), 'b => reactHook('a)) => reactHook('a);
+
 let cloneElementOther:
   (ReasonReact.reactElement, 'props) => ReasonReact.reactElement;
 
 module ReasonReact: {
-  include (module type of ReasonReact) with type reactElement = ReasonReact.reactElement;
+  include
+     (module type of ReasonReact) with
+      type reactElement = ReasonReact.reactElement;
   let element:
     (~key: 'a=?, ~ref: 'b=?, ReasonReact.reactElement) =>
     ReasonReact.reactElement;
@@ -32,10 +38,8 @@ let createElement:
 
 
 
-type reactHook('a);
-let map: (reactHook('b), 'b => 'a) => reactHook('a);
-
-[@bs.set] external setName: ((. 'props) => ReasonReact.reactElement, string) => unit = "displayName";
+let setName:
+  ((. 'props) => reactHook(ReasonReact.reactElement), string) => unit;
 
 let useState: 'a => reactHook(('a, (. 'a) => unit));
 
@@ -66,18 +70,9 @@ external useReducer:
   ('state, (. 'action) => unit) =
   "";
 
-[@bs.module "react"]
-external createElement:
+let createElement:
   (
-    ~component: (. Js.t({..} as 'a)) => ReasonReact.reactElement,
-    ~props: Js.t({..} as 'a)
-  ) =>
-  ReasonReact.reactElement =
-  "";
-
-let createElementWithHookedComponent:
-  (
-    ~component: (. Js.t({..} as 'a)) => reactHook('b),
+    ~component: (. Js.t({..} as 'a)) => reactHook(ReasonReact.reactElement),
     ~props: Js.t({..} as 'a)
   ) =>
   ReasonReact.reactElement;

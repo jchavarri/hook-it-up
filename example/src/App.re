@@ -5,7 +5,7 @@ module Just = {
   let component =
     (. props: {. "initialValue": int}) =>
       Hooks.useState(props##initialValue)
-      ->Hooks.map(((count, setCount)) =>
+      ->Hooks.chain(((count, setCount)) =>
           Hooks.useState(true)
           ->Hooks.map(((show, setShown)) =>
               <div>
@@ -23,10 +23,10 @@ module Just = {
               </div>
             )
         );
-  /* component->Hooks.setName("Just"); */
+  component->Hooks.setName("Just");
 
   let make = (~initialValue, _children) =>
-    Hooks.createElementWithHookedComponent(~component, ~props={"initialValue": initialValue});
+    Hooks.createElement(~component, ~props={"initialValue": initialValue});
 };
 
 ReactDOMRe.renderToElementWithId(<Just initialValue=10 />, "root");

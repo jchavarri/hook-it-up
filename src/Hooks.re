@@ -1,3 +1,12 @@
+type reactHook('t);
+
+let wrap: 't => reactHook('t) = x => Obj.magic(x);
+let unwrap: reactHook('t) => 't = x => Obj.magic(x);
+let unwrapComponent:
+  ((. 'props) => reactHook(ReasonReact.reactElement)) =>
+  (. 'props) => ReasonReact.reactElement =
+  x => Obj.magic(x);
+
 [@bs.module "react"]
 external cloneElementOther:
   (ReasonReact.reactElement, 'props) => ReasonReact.reactElement =
@@ -9,14 +18,17 @@ module ReasonReact = {
     cloneElementOther(element, {"key": key, "ref": ref});
 };
 
-[@bs.set] external setName: ((. 'props) => ReasonReact.reactElement, string) => unit = "displayName";
+[@bs.set]
+external setName: ((. 'props) => ReasonReact.reactElement, string) => unit =
+  "displayName";
+let setName = (component, string) =>
+  setName(unwrapComponent(component), string);
 
-type reactHook('a) =
-  | Hook('a);
-let map = (Hook(a), f) => Hook(f(a));
+let map = (a, f) => wrap(f(unwrap(a)));
+let chain = (a, f) => f(unwrap(a));
 
 [@bs.module "react"] external useState: 'a => ('a, (. 'a) => unit) = "";
-let useState = a => Hook(useState(a));
+let useState = a => wrap(useState(a));
 
 [@bs.module "react"] external useEffect: ((unit) => ((. unit) => unit)) => unit = "";
 [@bs.module "react"]
@@ -53,11 +65,6 @@ external createElement:
   ReasonReact.reactElement =
   "";
 
-/* let unwrapHook: t('t) => t(('t, effect)) = Obj.magic; */
-let rec createElementWithHookedComponent = (~component, ~props) =>
-  switch (component) {
-  | Hook(Hook(a)) =>
-    createElementWithHookedComponent(~component=(Hook(a)), ~props)
-  | Hook(a) => createElement(a)
-  };
+let createElement = (~component, ~props) =>
+  createElement(~component=unwrapComponent(component), ~props);
 /* Not doing useImperativeMethods because it's super confusing. */

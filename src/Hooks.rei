@@ -1,3 +1,6 @@
+type hook('t);
+let unwrap: hook('t) => 't;
+
 let cloneElementOther:
   (ReasonReact.reactElement, 'props) => ReasonReact.reactElement;
 
@@ -35,7 +38,7 @@ let createElement:
 
 [@bs.set] external setName: ((. 'props) => ReasonReact.reactElement, string) => unit = "displayName";
 
-[@bs.module "react"] external useState: 'a => ('a, (. 'a) => unit) = "";
+let useState: 't => hook(('t, (. 't) => unit));
 
 
 [@bs.module "react"] external useEffect: ((unit) => ((. unit) => unit)) => unit = "";

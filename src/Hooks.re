@@ -1,8 +1,8 @@
-type hook('t);
+type hook('t, 'l);
 /* `wrap` should ever be exposed from the Hooks module,
    in order to keep type checks safe */
-let wrap: 't => hook('t) = x => Obj.magic(x);
-let unwrap: hook('t) => 't = x => Obj.magic(x);
+let wrap: 't => hook('t, 'l) = x => Obj.magic(x);
+let unwrap: hook('t, 'l) => 't = x => Obj.magic(x);
 
 /* let addState: (t('t), ~state: 'state) => t(('t, state('state))) =
      (x, ~state as _) => Obj.magic(x);
@@ -25,7 +25,8 @@ external setName: ((. 'props) => ReasonReact.reactElement, string) => unit =
   "displayName";
 
 [@bs.module "react"] external useState: 'a => ('a, (. 'a) => unit) = "";
-let useState = initialState => wrap(useState(initialState));
+let useState: hook('t, 'l) => hook(('t, (. 't) => unit), 'l) =
+  initialState => Obj.magic(useState(initialState));
 
 [@bs.module "react"]
 external useEffect: (unit => (. unit) => unit) => unit = "";

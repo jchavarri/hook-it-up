@@ -4,7 +4,8 @@ module ReasonReact = Hooks.ReasonReact;
 module Just = {
   let component =
     (. props: {. "initialValue": int}) => {
-      let (count, setCount) = Hooks.(unwrap(useState(props##initialValue)));
+      let (count, setCount) =
+        Hooks.(unwrap(useState(wrap(props##initialValue))));
       let (show, setShown) = Hooks.(unwrap(useState(true)));
       let (_name, _setName) =
         Random.bool() ?
